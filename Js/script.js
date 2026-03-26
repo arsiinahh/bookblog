@@ -20,3 +20,19 @@ function addComment(btn) {
 
     input.value = '';
 }
+
+function fmt(command, value = null) {
+  document.execCommand(command, false, value);
+  document.getElementById('commentBox').focus();
+}
+
+function postComment() {
+  const box = document.getElementById('commentBox');
+  const content = box.innerHTML.trim();
+  if (!content || content === '') return;
+
+  // Your existing post logic here
+  // For now just clears the box after posting
+  console.log('Comment posted:', content);
+  box.innerHTML = '';
+}

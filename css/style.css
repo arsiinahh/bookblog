@@ -102,3 +102,98 @@ footer {
     font-size: 0.9rem;
     opacity: 0.6;
 }
+
+.editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.editor-toolbar button,
+.editor-toolbar select {
+  background: #e8dcc8;
+  border: none;
+  border-radius: 8px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #3b2f2f;
+  transition: background 0.2s;
+}
+
+.editor-toolbar button:hover,
+.editor-toolbar select:hover {
+  background: #d4c5a9;
+}
+
+.editor-box {
+  min-height: 80px;
+  border: 1px solid #d4c5a9;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 14px;
+  color: #3b2f2f;
+  outline: none;
+  background: #fff;
+  line-height: 1.6;
+}
+
+.editor-box:empty:before {
+  content: attr(data-placeholder);
+  color: #aaa;
+}
+
+.editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+/* Login Screen */
+#loginScreen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.login-box {
+  background: #fff;
+  padding: 40px;
+  border-radius: 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.login-box input {
+  padding: 10px 16px;
+  border: 1px solid #d4c5a9;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+}
+
+/* Star Picker */
+.star-picker span {
+  font-size: 28px;
+  color: #ccc;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.star-picker span:hover {
+  color: #c9a96e;
+}
+
+/* Labels */
+label {
+  display: block;
+  font-weight: 500;
+  margin: 12px 0 4px;
+  color: #3b2f2f;
+}

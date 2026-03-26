@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dea Writes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- PASSWORD SCREEN -->
+<div id="loginScreen">
+    <div class="login-box">
+        <h2>☕ Dea's Corner</h2>
+        <p>Enter your password to write</p>
+        <input type="password" id="passwordInput" placeholder="password...">
+        <button onclick="checkPassword()">Enter</button>
+        <p id="loginError" style="color:#c0392b; display:none;">Wrong password!</p>
+    </div>
+</div>
+
+<!-- WRITE REVIEW SCREEN (hidden until login) -->
+<div id="writeScreen" style="display:none;">
+    <header>
+        <h1>☕ Dea Writes</h1>
+        <p>your cozy review corner</p>
+    </header>
+
+    <div class="container">
+        <div class="post">
+            <h2>New Review</h2>
+
+            <label>Book Title</label>
+            <input type="text" id="bookTitle" placeholder="e.g. The Secret History">
+
+            <label>Cover Image URL</label>
+            <input type="text" id="coverImage" placeholder="paste an image link...">
+            <img id="coverPreview" src="" alt="" style="max-width:120px; margin:8px 0; border-radius:8px; display:none;">
+
+            <label>Star Rating</label>
+            <div class="star-picker" id="starPicker">
+                <span onclick="setRating(1)">★</span>
+                <span onclick="setRating(2)">★</span>
+                <span onclick="setRating(3)">★</span>
+                <span onclick="setRating(4)">★</span>
+                <span onclick="setRating(5)">★</span>
+            </div>
+            <input type="hidden" id="starRating" value="0">
+
+            <label>Your Review</label>
+            <div class="editor-wrapper">
+                <div class="editor-toolbar">
+                    <button onclick="fmt2('bold')"><b>B</b></button>
+                    <button onclick="fmt2('italic')"><i>I</i></button>
+                    <button onclick="fmt2('underline')"><u>U</u></button>
+                    <button onclick="fmt2('insertOrderedList')">≡</button>
+                    <select onchange="fmt2('foreColor', this.value); this.selectedIndex=0;">
+                        <option value="">Color</option>
+                        <option value="#8B5E3C">Brown</option>
+                        <option value="#c0392b">Red</option>
+                        <option value="#2980b9">Blue</option>
+                        <option value="#27ae60">Green</option>
+                        <option value="#8e44ad">Purple</option>
+                    </select>
+                    <select onchange="fmt2('formatBlock', this.value); this.selectedIndex=0;">
+                        <option value="">Heading</option>
+                        <option value="H1">H1</option>
+                        <option value="H2">H2</option>
+                        <option value="H3">H3</option>
+                        <option value="p">Normal</option>
+                    </select>
+                </div>
+                <div class="editor-box" contenteditable="true" id="reviewBox" data-placeholder="write your review here..."></div>
+            </div>
+
+            <button class="post-btn" onclick="submitReview()" style="margin-top:12px;">Publish Review ✨</button>
+            <p id="successMsg" style="color:#27ae60; display:none;">Review published! 🎉</p>
+        </div>
+    </div>
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    //  YOUR FIREBASE CONFIG HERE
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyDk80SSAkgFbhHaGAM5Q9pu8Lpz6fPemiE",
+  authDomain: "deas-bookblog.firebaseapp.com",
+  projectId: "deas-bookblog",
+  storageBucket: "deas-bookblog.firebasestorage.app",
+  messagingSenderId: "510960037167",
+  appId: "1:510960037167:web:fdb238a97415e0903985da"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // PASSWORD CHECK
+    const PASSWORD = "DeaRev777"; // 🔒 change this to whatever you want
+    window.checkPassword = function() {
+      const val = document.getElementById('passwordInput').value;
+      if (val === PASSWORD) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('writeScreen').style.display = 'block';
+      } else {
+        document.getElementById('loginError').style.display = 'block';
+      }
+    }
+
+    // STAR RATING
+    let currentRating = 0;
+    window.setRating = function(n) {
+      currentRating = n;
+      document.getElementById('starRating').value = n;
+      const stars = document.querySelectorAll('#starPicker span');
+      stars.forEach((s, i) => s.style.color = i < n ? '#c9a96e' : '#ccc');
+    }
+
+    // RICH TEXT
+    window.fmt2 = function(command, value = null) {
+      document.execCommand(command, false, value);
+      document.getElementById('reviewBox').focus();
+    }
+
+    // COVER PREVIEW
+    document.getElementById('coverImage').addEventListener('input', function() {
+      const preview = document.getElementById('coverPreview');
+      if (this.value) {
+        preview.src = this.value;
+        preview.style.display = 'block';
+      } else {
+        preview.style.display = 'none';
+      }
+    });
+
+    // SUBMIT REVIEW
+    window.submitReview = async function() {
+      const title = document.getElementById('bookTitle').value.trim();
+      const cover = document.getElementById('coverImage').value.trim();
+      const rating = currentRating;
+      const review = document.getElementById('reviewBox').innerHTML.trim();
+
+      if (!title || !review || rating === 0) {
+        alert('Please fill in the title, rating and review!');
+        return;
+      }
+
+      await addDoc(collection(db, "reviews"), {
+        title, cover, rating, review,
+        createdAt: serverTimestamp()
+      });
+
+      document.getElementById('successMsg').style.display = 'block';
+      document.getElementById('bookTitle').value = '';
+      document.getElementById('coverImage').value = '';
+      document.getElementById('reviewBox').innerHTML = '';
+      document.getElementById('coverPreview').style.display = 'none';
+      setRating(0);
+      setTimeout(() => document.getElementById('successMsg').style.display = 'none', 3000);
+    }
+</script>
+
+</body>
+</html>
