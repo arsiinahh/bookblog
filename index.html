@@ -3,50 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Blog</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-
-    <!-- CONNECT CSS -->
+    <title>Cozy Book Notes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<header>
-    <h1>☕ Cozy Book Notes</h1>
-    <p>soft thoughts & honest reviews</p>
-</header>
-
 <nav>
-    <a href="#">Home</a>
-    <a href="#">Reviews</a>
-    <a href="#">Favorites</a>
+    <a href="#home">Home</a>
+    <a href="#reviews">Book Reviews</a>
+    <a href="#blog">Blog</a>
+    <a href="#about">About Us</a>
 </nav>
 
-<div class="container" id="blogContainer">
+<!-- HOME -->
+<div class="strip strip-home" id="home">
+    <div class="strip-inner">
+        <p class="eyebrow">a little corner of the internet</p>
+        <h1 class="hero-title">Cozy Book Notes</h1>
+        <p class="hero-sub">soft thoughts & honest reviews</p>
+        <div class="rule"></div>
+        <div class="chips">
+            <div class="chip">Honest Reviews</div>
+            <div class="chip">Cozy Reads</div>
+            <div class="chip">Personal Thoughts</div>
+            <div class="chip">Warm Vibes</div>
+        </div>
+    </div>
+</div>
 
-    <div class="post">
-        <h2>Book Title</h2>
-        <p>Book reviwess ketuuu </p>
-        <button onclick="likePost(this)">♡ Like</button>
+<!-- BOOK REVIEWS -->
+<div class="strip strip-reviews" id="reviews">
+    <div class="strip-inner">
+        <p class="sec-label">from the shelves</p>
+        <h2 class="sec-title">Book Reviews</h2>
+        <p class="sec-desc">honest thoughts on every page turned</p>
+        <div class="reviews-grid" id="blogContainer">
+            <p id="loadingMsg">loading reviews...</p>
+        </div>
+    </div>
+</div>
 
-        <div class="comment-section">
-            <div class="comments"></div>
+<!-- BLOG -->
+<div class="strip strip-blog" id="blog">
+    <div class="strip-inner">
+        <p class="sec-label">musings</p>
+        <h2 class="sec-title">Blog</h2>
+        <p class="sec-desc">thoughts that don't quite fit between book covers</p>
 
-            <div class="comment-input">
-                <input type="text" placeholder="leave a cute comment...">
-                <button onclick="addComment(this)">Post</button>
+        <div class="blog-grid" id="blogPosts">
+            <div class="blog-card">
+                <span class="blog-tag">Reading Life</span>
+                <h3>Why I Read Before Bed (and Why You Should Too)</h3>
+                <p>There's something magical about slipping into another world just before sleep. A few pages, a warm light, and suddenly the day melts away...</p>
+                <div class="blog-date">coming soon</div>
+            </div>
+            <div class="blog-card">
+                <span class="blog-tag">Favorites</span>
+                <h3>Books That Made Me Feel Understood</h3>
+                <p>Sometimes a book says exactly what you've been feeling but couldn't put into words. Here are mine...</p>
+                <div class="blog-date">coming soon</div>
+            </div>
+            <div class="blog-card">
+                <span class="blog-tag">Thoughts</span>
+                <h3>On Reading Slowly and Letting Stories Breathe</h3>
+                <p>I used to rush through books to say I'd read them. Now I linger. I re-read paragraphs. I close the book and just sit with it...</p>
+                <div class="blog-date">coming soon</div>
             </div>
         </div>
     </div>
+</div>
 
+<!-- ABOUT -->
+<div class="strip strip-about" id="about">
+    <div class="strip-inner">
+        <div class="about-grid">
+            <div class="about-card">
+                📖
+                <span>Dea's bookshelf</span>
+            </div>
+            <div class="about-text">
+                <p class="sec-label">the person behind the pages</p>
+                <h2 class="sec-title" style="margin-bottom:24px;">About Us</h2>
+                <p>Hi, I'm Dea — a reader, a dreamer, and someone who takes her tea with too much milk and her books with too many post-it notes.</p>
+                <p>This little corner of the internet is where I come to talk about the stories that moved me, the characters that felt like friends, and the books that made me want to call someone at midnight just to say <em>"you have to read this."</em></p>
+                <p><em>Cozy Book Notes</em> isn't about being a professional critic. It's about being honest — about the books I loved, the ones I didn't finish, and everything in between. If you find your next favorite read here, or just feel a little less alone in your reading life, then this page has done its job.</p>
+                <div class="about-stats">
+                    <div class="stat">
+                        <span class="stat-num">∞</span>
+                        <span class="stat-label">Books Loved</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-num">☕</span>
+                        <span class="stat-label">Cups of Tea</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-num">🌸</span>
+                        <span class="stat-label">Soft Thoughts</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <footer>
-    made with love 📖
+    <div class="f-title">Cozy Book Notes</div>
+    <p>made with love, tea & too many bookmarks</p>
 </footer>
 
-<!-- CONNECT JS -->
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal()">×</button>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDk80SSAkgFbhHaGAM5Q9pu8Lpz6fPemiE",
+        authDomain: "deas-bookblog.firebaseapp.com",
+        projectId: "deas-bookblog",
+        storageBucket: "deas-bookblog.firebasestorage.app",
+        messagingSenderId: "510960037167",
+        appId: "1:510960037167:web:fdb238a97415e0903985da"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const container = document.getElementById('blogContainer');
+    const q = query(collection(db, "reviews"), orderBy("createdAt", "desc"));
+
+    onSnapshot(q, (snapshot) => {
+        document.getElementById('loadingMsg')?.remove();
+        container.innerHTML = '';
+
+        if (snapshot.empty) {
+            container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-light);font-style:italic;padding:40px;">No reviews yet... check back soon</p>';
+            return;
+        }
+
+        snapshot.forEach(doc => {
+            const d = doc.data();
+            const stars = '★'.repeat(d.rating) + '<span class="empty">' + '★'.repeat(5 - d.rating) + '</span>';
+            const enc = encodeURIComponent(JSON.stringify({
+                title: d.title,
+                author: d.author || '',
+                rating: d.rating,
+                review: d.review,
+                cover: d.cover || ''
+            }));
+
+            container.innerHTML += `
+                <div class="book-card" onclick="openModal('${enc}')">
+                    ${d.cover
+                        ? `<img src="${d.cover}" class="book-cover" alt="cover">`
+                        : `<div class="book-cover-placeholder">📖</div>`}
+                    <h3>${d.title}</h3>
+                    ${d.author ? `<div class="book-author">by ${d.author}</div>` : ''}
+                    <div class="stars">${stars}</div>
+                    <div class="book-excerpt">${d.review}</div>
+                    <div class="card-footer">
+                        <span class="read-more">Read more →</span>
+                        <button class="like-btn" onclick="event.stopPropagation();likePost(this)">♡ Like</button>
+                    </div>
+                </div>`;
+        });
+    });
+</script>
+
 <script src="js/script.js"></script>
 
 </body>

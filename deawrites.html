@@ -20,7 +20,7 @@
     </div>
 </div>
 
-<!-- WRITE REVIEW SCREEN (hidden until login) -->
+<!-- WRITE REVIEW SCREEN -->
 <div id="writeScreen" style="display:none;">
     <header>
         <h1>☕ Dea Writes</h1>
@@ -46,7 +46,6 @@
                 <span onclick="setRating(4)">★</span>
                 <span onclick="setRating(5)">★</span>
             </div>
-            <input type="hidden" id="starRating" value="0">
 
             <label>Your Review</label>
             <div class="editor-wrapper">
@@ -80,27 +79,24 @@
     </div>
 </div>
 
-<!-- FIREBASE -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    //  YOUR FIREBASE CONFIG HERE
-
     const firebaseConfig = {
-  apiKey: "AIzaSyDk80SSAkgFbhHaGAM5Q9pu8Lpz6fPemiE",
-  authDomain: "deas-bookblog.firebaseapp.com",
-  projectId: "deas-bookblog",
-  storageBucket: "deas-bookblog.firebasestorage.app",
-  messagingSenderId: "510960037167",
-  appId: "1:510960037167:web:fdb238a97415e0903985da"
-};
+      apiKey: "AIzaSyDk80SSAkgFbhHaGAM5Q9pu8Lpz6fPemiE",
+      authDomain: "deas-bookblog.firebaseapp.com",
+      projectId: "deas-bookblog",
+      storageBucket: "deas-bookblog.firebasestorage.app",
+      messagingSenderId: "510960037167",
+      appId: "1:510960037167:web:fdb238a97415e0903985da"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // PASSWORD CHECK
-    const PASSWORD = "DeaRev777"; // 🔒 change this to whatever you want
+    // PASSWORD
+    const PASSWORD = "cozybooknotes";
     window.checkPassword = function() {
       const val = document.getElementById('passwordInput').value;
       if (val === PASSWORD) {
@@ -111,11 +107,15 @@
       }
     }
 
+    // ENTER KEY for password
+    document.getElementById('passwordInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') window.checkPassword();
+    });
+
     // STAR RATING
     let currentRating = 0;
     window.setRating = function(n) {
       currentRating = n;
-      document.getElementById('starRating').value = n;
       const stars = document.querySelectorAll('#starPicker span');
       stars.forEach((s, i) => s.style.color = i < n ? '#c9a96e' : '#ccc');
     }
@@ -137,30 +137,33 @@
       }
     });
 
-    // SUBMIT REVIEW
+    // SUBMIT
     window.submitReview = async function() {
       const title = document.getElementById('bookTitle').value.trim();
       const cover = document.getElementById('coverImage').value.trim();
-      const rating = currentRating;
       const review = document.getElementById('reviewBox').innerHTML.trim();
 
-      if (!title || !review || rating === 0) {
+      if (!title || !review || currentRating === 0) {
         alert('Please fill in the title, rating and review!');
         return;
       }
 
-      await addDoc(collection(db, "reviews"), {
-        title, cover, rating, review,
-        createdAt: serverTimestamp()
-      });
+      try {
+        await addDoc(collection(db, "reviews"), {
+          title, cover, rating: currentRating, review,
+          createdAt: serverTimestamp()
+        });
 
-      document.getElementById('successMsg').style.display = 'block';
-      document.getElementById('bookTitle').value = '';
-      document.getElementById('coverImage').value = '';
-      document.getElementById('reviewBox').innerHTML = '';
-      document.getElementById('coverPreview').style.display = 'none';
-      setRating(0);
-      setTimeout(() => document.getElementById('successMsg').style.display = 'none', 3000);
+        document.getElementById('successMsg').style.display = 'block';
+        document.getElementById('bookTitle').value = '';
+        document.getElementById('coverImage').value = '';
+        document.getElementById('reviewBox').innerHTML = '';
+        document.getElementById('coverPreview').style.display = 'none';
+        window.setRating(0);
+        setTimeout(() => document.getElementById('successMsg').style.display = 'none', 3000);
+      } catch(e) {
+        alert('Error saving review: ' + e.message);
+      }
     }
 </script>
 
