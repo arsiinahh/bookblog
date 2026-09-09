@@ -130,7 +130,7 @@
     // store reviews here instead of embedding them in HTML attributes
     window.reviewsData = [];
 
-    onSnapshot(q, (snapshot) => {
+        onSnapshot(q, (snapshot) => {
         document.getElementById('loadingMsg')?.remove();
         container.innerHTML = '';
         window.reviewsData = [];
@@ -140,7 +140,8 @@
             return;
         }
 
-        snapshot.forEach((doc, index) => {
+        let index = 0;
+        snapshot.forEach((doc) => {
             const d = doc.data();
             window.reviewsData[index] = {
                 title: d.title,
@@ -166,9 +167,10 @@
                         <button class="like-btn" onclick="event.stopPropagation();likePost(this)">♡ Like</button>
                     </div>
                 </div>`;
+
+            index++;
         });
 
-        // attach click listeners after building the cards
         document.querySelectorAll('.book-card').forEach(card => {
             card.addEventListener('click', () => {
                 const idx = card.getAttribute('data-index');
@@ -176,6 +178,8 @@
             });
         });
     });
+
+
 </script>
 
 <script src="js/script.js"></script>
