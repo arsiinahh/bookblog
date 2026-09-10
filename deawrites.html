@@ -6,6 +6,7 @@
     <title>Dea Writes</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/write.css">
 </head>
 <body>
 
@@ -13,10 +14,12 @@
 <div id="loginScreen">
     <div class="login-box">
         <h2>☕ Dea's Corner</h2>
-        <p>Enter your password to write</p>
-        <input type="password" id="passwordInput" placeholder="password...">
-        <button onclick="checkPassword()">Enter</button>
-        <p id="loginError" style="color:#c0392b; display:none;">Wrong password!</p>
+        <form id="loginForm">
+            <input id="emailInput" type="text" placeholder="Email" required>
+            <input id="passwordInput" type="password" placeholder="Password" required>
+            <button type="submit">Log in</button>
+            <p id="loginError" style="color:red;"></p>
+        </form>
     </div>
 </div>
 
@@ -82,6 +85,10 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+        getAuth,
+        signInWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDk80SSAkgFbhHaGAM5Q9pu8Lpz6fPemiE",
@@ -93,23 +100,44 @@
     };
 
     const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
     const db = getFirestore(app);
 
-    // PASSWORD
-    const PASSWORD = "cozybooknotes";
-    window.checkPassword = function() {
-      const val = document.getElementById('passwordInput').value;
-      if (val === PASSWORD) {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('writeScreen').style.display = 'block';
-      } else {
-        document.getElementById('loginError').style.display = 'block';
-      }
+    async function loginUser(email, password) {
+
+
+       if (!email) {
+            showLoginError("Unknown username.");
+            return;
+        }
+ try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            console.log("Logged in as:", userCredential.user.email);
+            onLoginSuccess(userCredential.user);
+        } catch (error) {
+            console.error("Login failed:", error.code);
+            showLoginError("Incorrect username or password.");
+        }
     }
 
-    // ENTER KEY for password
-    document.getElementById('passwordInput').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') window.checkPassword();
+    function onLoginSuccess(user) {
+        // TODO: show whatever admin content should appear after login
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('writeScreen').style.display = 'block';
+    }
+
+    function showLoginError(message) {
+        const errorEl = document.getElementById('loginError');
+        if (errorEl) errorEl.textContent = message;
+    }
+
+    // wire it up to your form
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('emailInput').value.trim();
+        const password = document.getElementById('passwordInput').value;
+        loginUser(email, password);
     });
 
     // STAR RATING
@@ -139,32 +167,39 @@
 
     // SUBMIT
     window.submitReview = async function() {
-      const title = document.getElementById('bookTitle').value.trim();
-      const cover = document.getElementById('coverImage').value.trim();
-      const review = document.getElementById('reviewBox').innerHTML.trim();
+  // block if not logged in
+  if (!auth.currentUser) {
+    alert('You must be logged in to submit a review.');
+    return;
+  }
 
-      if (!title || !review || currentRating === 0) {
-        alert('Please fill in the title, rating and review!');
-        return;
-      }
+  const title = document.getElementById('bookTitle').value.trim();
+  const cover = document.getElementById('coverImage').value.trim();
+  const review = document.getElementById('reviewBox').innerHTML.trim();
 
-      try {
-        await addDoc(collection(db, "reviews"), {
-          title, cover, rating: currentRating, review,
-          createdAt: serverTimestamp()
-        });
+  if (!title || !review || currentRating === 0) {
+    alert('Please fill in the title, rating and review!');
+    return;
+  }
 
-        document.getElementById('successMsg').style.display = 'block';
-        document.getElementById('bookTitle').value = '';
-        document.getElementById('coverImage').value = '';
-        document.getElementById('reviewBox').innerHTML = '';
-        document.getElementById('coverPreview').style.display = 'none';
-        window.setRating(0);
-        setTimeout(() => document.getElementById('successMsg').style.display = 'none', 3000);
-      } catch(e) {
-        alert('Error saving review: ' + e.message);
-      }
-    }
+  try {
+    await addDoc(collection(db, "reviews"), {
+      title, cover, rating: currentRating, review,
+      createdAt: serverTimestamp(),
+      authorUid: auth.currentUser.uid   // optional but useful — tracks who posted it
+    });
+
+    document.getElementById('successMsg').style.display = 'block';
+    document.getElementById('bookTitle').value = '';
+    document.getElementById('coverImage').value = '';
+    document.getElementById('reviewBox').innerHTML = '';
+    document.getElementById('coverPreview').style.display = 'none';
+    window.setRating(0);
+    setTimeout(() => document.getElementById('successMsg').style.display = 'none', 3000);
+  } catch(e) {
+    alert('Error saving review: ' + e.message);
+  }
+}
 </script>
 
 </body>
