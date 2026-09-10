@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Review — Dea Michelle Blog</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="index.html#reviews">Book Reviews</a>
+    <a href="index.html#blog">Blog</a>
+    <a href="index.html#about">About Us</a>
+</nav>
+
+<section class="blog-article">
+    <div class="blog-header">
+        <p class="sec-label" id="reviewAuthorLabel">by ...</p>
+        <h1 id="reviewTitle">Loading...</h1>
+        <div class="blog-meta" id="reviewStars"></div>
+    </div>
+
+    <img id="reviewCover" class="hero-image" style="display:none;">
+
+    <div class="blog-content">
+        <p id="reviewText"></p>
+        <a href="index.html#reviews" class="back-home">← Back to Reviews</a>
+    </div>
+</section>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDk80SSAkgFbhHaGAM5Q9pu8Lpz6fPemiE",
+        authDomain: "deas-bookblog.firebaseapp.com",
+        projectId: "deas-bookblog",
+        storageBucket: "deas-bookblog.firebasestorage.app",
+        messagingSenderId: "510960037167",
+        appId: "1:510960037167:web:fdb238a97415e0903985da"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const reviewId = params.get('id');
+
+    if (!reviewId) {
+        document.getElementById('reviewTitle').textContent = "Review not found";
+    } else {
+        const docRef = doc(db, "reviews", reviewId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const d = docSnap.data();
+            document.title = d.title + " — Dea Michelle Blog";
+            document.getElementById('reviewTitle').textContent = d.title;
+            document.getElementById('reviewAuthorLabel').textContent = d.author ? `by ${d.author}` : '';
+            document.getElementById('reviewStars').innerHTML = '★'.repeat(d.rating) + '<span style="opacity:.25">★</span>'.repeat(5 - d.rating);
+            document.getElementById('reviewText').innerHTML = d.review;
+
+            if (d.cover) {
+                const img = document.getElementById('reviewCover');
+                img.src = d.cover;
+                img.style.display = 'block';
+            }
+        } else {
+            document.getElementById('reviewTitle').textContent = "Review not found";
+        }
+    }
+</script>
+
+</body>
+</html>

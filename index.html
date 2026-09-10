@@ -89,13 +89,7 @@
     <p>made with love, tea & too many bookmarks</p>
 </footer>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modalOverlay">
-    <div class="modal">
-        <button class="modal-close" onclick="closeModal()">×</button>
-        <div id="modalBody"></div>
-    </div>
-</div>
+
 
 <!-- FIREBASE -->
 <script type="module">
@@ -116,34 +110,23 @@
     const container = document.getElementById('blogContainer');
     const q = query(collection(db, "reviews"), orderBy("createdAt", "desc"));
 
-    // store reviews here instead of embedding them in HTML attributes
-    window.reviewsData = [];
-
-        onSnapshot(q, (snapshot) => {
+    onSnapshot(q, (snapshot) => {
         document.getElementById('loadingMsg')?.remove();
         container.innerHTML = '';
-        window.reviewsData = [];
 
         if (snapshot.empty) {
             container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-light);font-style:italic;padding:40px;">No reviews yet... check back soon</p>';
             return;
         }
 
-        let index = 0;
         snapshot.forEach((doc) => {
             const d = doc.data();
-            window.reviewsData[index] = {
-                title: d.title,
-                author: d.author || '',
-                rating: d.rating,
-                review: d.review,
-                cover: d.cover || ''
-            };
-
             const stars = '★'.repeat(d.rating) + '<span class="empty">' + '★'.repeat(5 - d.rating) + '</span>';
 
             container.innerHTML += `
-                <div class="book-card" data-index="${index}">
+   <a href="reviews.html?id=${doc.id}" class="book-card">
+
+
                     ${d.cover
                         ? `<img src="${d.cover}" class="book-cover" alt="cover">`
                         : `<div class="book-cover-placeholder">📖</div>`}
@@ -153,25 +136,15 @@
                     <div class="book-excerpt">${d.review}</div>
                     <div class="card-footer">
                         <span class="read-more">Read more →</span>
-                        <button class="like-btn" onclick="event.stopPropagation();likePost(this)">♡ Like</button>
+                        <button class="like-btn" onclick="event.stopPropagation();event.preventDefault();likePost(this)">♡ Like</button>
                     </div>
-                </div>`;
-
-            index++;
-        });
-
-        document.querySelectorAll('.book-card').forEach(card => {
-            card.addEventListener('click', () => {
-                const idx = card.getAttribute('data-index');
-                openModal(window.reviewsData[idx]);
-            });
+                </a>`;
         });
     });
-
-
 </script>
 
 <script src="js/script.js"></script>
+
 
 </body>
 </html>

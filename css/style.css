@@ -477,6 +477,21 @@ footer .f-title {
     animation: mIn 0.3s ease;
 }
 
+
+a.book-card {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+.hero-image {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: 500px;
+    object-fit: contain;
+    margin: 40px auto;
+}
+
 @keyframes mIn {
     from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -703,3 +718,16 @@ img {
     background-color: #ffffff !important;
     opacity: 1 !important;
 }
+.hero-image {
+    display: block;
+    width: auto;
+    height: 500px;
+    max-width: 90%;
+    object-fit: contain;
+    margin: 40px auto;
+}
+#reviewText {
+    white-space: pre-line;
+    line-height: 1.8;
+}
+
