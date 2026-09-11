@@ -731,3 +731,77 @@ img {
     line-height: 1.8;
 }
 
+/* ── MOBILE ARTICLE TEXT ── */
+@media (max-width: 700px) {
+
+    /* Book Reviews */
+    .modal-review {
+        font-size: 1rem;
+        line-height: 1.8;
+    }
+
+    /* Book Blog */
+    .blog-content p {
+        font-size: 1rem;
+        line-height: 1.8;
+    }
+
+    .blog-content p:first-child {
+        font-size: 1.15rem;
+    }
+}
+@media (max-width: 700px) {
+
+    /* BLOG ARTICLE */
+    .blog-article {
+        padding: 110px 24px 70px;
+    }
+
+    .blog-header {
+        width: 100%;
+        margin-bottom: 40px;
+    }
+
+    .blog-header h1 {
+        font-size: 2.2rem;
+        line-height: 1.15;
+    }
+
+    .blog-content {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .blog-content p {
+        font-size: 1rem;
+        line-height: 1.8;
+        margin-bottom: 28px;
+    }
+
+    .blog-content p:first-child {
+        font-size: 1.1rem;
+    }
+
+    .blog-content blockquote {
+        font-size: 1.5rem;
+        margin: 50px auto;
+    }
+
+    .hero-image {
+        height: 250px;
+        width: 100%;
+        margin: 35px auto 50px;
+    }
+
+    /* BOOK REVIEWS MODAL */
+    .modal {
+        padding: 40px 24px;
+        width: 94%;
+        max-height: 94vh;
+    }
+
+    .modal-review {
+        font-size: 1rem;
+        line-height: 1.8;
+    }
+}
